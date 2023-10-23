@@ -36,6 +36,6 @@ node {
         }
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
-        error("Pipeline failed: ${e.getMessage()}")
+        error("Pipeline GAGAL: ${e.getMessage()}")
     }
 }
