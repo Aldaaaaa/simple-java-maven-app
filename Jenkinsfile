@@ -35,11 +35,7 @@ node {
             }
         }
         stage('Manual Approval') {
-            def userInput = input(
-                id: 'userInput',
-                message: 'Lanjutkan ke tahap Deploy?',
-                description: 'Klik "Proceed" untuk melanjutkan dan klik "Abort" untuk mengakhiri'
-            )
+            input message: 'Lanjutkan ke tahap Deploy? (Klik "Proceed" untuk melanjutkan dan klik "Abort" untuk mengakhiri)'
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
