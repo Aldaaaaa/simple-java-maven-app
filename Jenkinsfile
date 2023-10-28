@@ -51,6 +51,7 @@ node {
                     sh './jenkins/scripts/deliver.sh'
                 }
                 sleep time: 60, unit: 'SECONDS'
+                sh './jenkins/scripts/kill.sh'
             } catch (Exception e) {
                 currentBuild.result = 'FAILURE'
                 error("Deploy failed: ${e.getMessage()}")
