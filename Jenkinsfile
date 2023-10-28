@@ -35,7 +35,15 @@ node {
             }
         }
         stage('Manual Approval') {
-            input message: 'Lanjutkan ke tahap Deploy? (Klik "Proceed" untuk melanjutkan dan klik "Abort" untuk mengakhiri)'
+            def userInput = input(
+                id: 'userInput',
+                message: 'Lanjutkan ke tahap Deploy? Klik "Proceed" untuk melanjutkan atau "Abort" untuk mengakhiri.'
+            )
+
+            if (userInput == 'Abort') {
+                currentBuild.result = 'ABORTED' // Menghentikan pipeline tanpa kesalahan
+                sh './jenkins/scripts/kill.sh' // Menjalankan skrip kill.sh
+            }
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
