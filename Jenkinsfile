@@ -23,6 +23,9 @@ node {
                 error("Test failed: ${e.getMessage()}")
             }
         }
+        stage('Manual Approval') {
+            input message: 'Lanjutkan ke tahap Deploy?'
+        }
         stage('Deliver') {
             def mavenImage = docker.image('maven:3.9.0')
             try {
@@ -33,9 +36,6 @@ node {
                 currentBuild.result = 'FAILURE'
                 error("Deliver failed: ${e.getMessage()}")
             }
-        }
-        stage('Manual Approval') {
-            input message: 'Lanjutkan ke tahap Deploy?', ok: 'Proceed', fail: 'Abort'
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
