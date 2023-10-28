@@ -35,7 +35,9 @@ node {
             }
         }
         stage('Manual Approval') {
-            input 'Lanjutkan ke tahap Deploy?' // Menunggu input dari pengguna
+            catchError(buildResult: 'ABORTED') {
+                input message: 'Lanjutkan ke tahap Deploy?', ok: 'Proceed', submitter: 'admin', parameters: [booleanParam(defaultValue: false, description: 'Lanjutkan ke tahap Deploy?', name: 'Proceed')]
+            }
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
