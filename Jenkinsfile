@@ -35,10 +35,19 @@ node {
             }
         }
         stage('Manual Approval') {
-            catchError(buildResult: 'ABORTED') {
-                input message: 'Lanjutkan ke tahap Deploy?', ok: 'Proceed', submitter: 'admin', parameters: [booleanParam(defaultValue: false, description: 'Lanjutkan ke tahap Deploy?', name: 'Proceed')]
-            }
+            def userInput = input(
+                id: 'userInput',
+                message: 'Lanjutkan ke tahap Deploy?',
+                parameters: [
+                    choice(name: 'ACTION', choices: ['Proceed', 'Abort'], description: 'Pilih tindakan')
+                ]
+            )
+
+            if (userInput == 'Abort') {
+                error("Pipeline dihentikan oleh pengguna.")
+                }
         }
+
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
             try {
