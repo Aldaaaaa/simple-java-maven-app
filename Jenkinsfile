@@ -35,18 +35,9 @@ node {
             }
         }
         stage('Manual Approval') {
-            def userInput = input(
-                id: 'userInput',
-                message: 'Lanjutkan ke tahap Deploy?'
-            )
-
-            if (userInput == 'Abort') {
-                currentBuild.result = 'ABORTED'
-                echo "Pipeline dihentikan oleh pengguna."
-                currentBuild.result = 'ABORTED'
-            }
+            input message: 'Lanjutkan ke tahap Deploy?',
+            ok: 'Proceed', parameters: [choice(choices: 'Proceed\nAbort', description: 'Pilih untuk melanjutkan atau menghentikan')]
         }
-
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
             try {
