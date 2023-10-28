@@ -37,14 +37,20 @@ node {
         stage('Manual Approval') {
             def userInput = input(
                 id: 'userInput',
-                message: 'Lanjutkan ke tahap Deploy? Klik "Proceed" untuk melanjutkan atau "Abort" untuk mengakhiri.'
+                message: 'Lanjutkan ke tahap Deploy? Klik "Proceed" untuk melanjutkan atau "Abort" untuk mengakhiri.',
+                ok: 'Proceed', // Ketika pengguna mengklik "Proceed"
+                parameters: [[$class: 'AbortButtonParameter']],
+                submitter: 'ABORTED', // Ketika pengguna mengklik "Abort"
+                submitterParameter: ''
             )
 
-            if (userInput == 'Abort') {
-                currentBuild.result = 'ABORTED' // Menghentikan pipeline tanpa kesalahan
-                sh './jenkins/scripts/kill.sh' // Menjalankan skrip kill.sh
+            if (userInput == 'ABORTED') {
+                currentBuild.result = 'ABORTED'
+                currentBuild.description = 'Pipeline aborted by user'
+                error("Pipeline aborted by user.")
             }
         }
+
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
             try {
