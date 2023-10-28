@@ -1,5 +1,4 @@
 node {
-    try {
         stage('Build') {
             def mavenImage = docker.image('maven:3.9.0')
             try {
@@ -49,8 +48,4 @@ node {
                 error("Deploy failed: ${e.getMessage()}")
             }
         }
-    } catch (Exception e) {
-        currentBuild.result = 'FAILURE'
-        error("Pipeline failed: ${e.getMessage()}")
-    }
 }
