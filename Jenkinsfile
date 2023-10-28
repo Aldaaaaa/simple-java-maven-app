@@ -41,7 +41,7 @@ node {
             def mavenImage = docker.image('maven:3.9.0')
             try {
                 mavenImage.inside("-v /root/.m2:/root/.m2") {
-                    sh './jenkins/scripts/deploy.sh'
+                    sh './jenkins/scripts/deliver.sh'
                 }
                 sleep time: 60, unit: 'SECONDS'
             } catch (Exception e) {
