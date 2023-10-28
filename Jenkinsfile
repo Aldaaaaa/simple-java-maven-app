@@ -1,30 +1,41 @@
-pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.0'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
-    stages {
+node {
+    try {
         stage('Build') {
-            steps {
-                sh 'mvn -B -DskipTests clean package'
+            def mavenImage = docker.image('maven:3.9.0')
+            try {
+                mavenImage.inside("-v /root/.m2:/root/.m2") {
+                    sh 'mvn -B -DskipTests clean package'
+                } 
+            } catch (Exception e) {
+                currentBuild.result = 'FAILURE'
+                error("Build failed: ${e.getMessage()}")
             }
         }
         stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+            def mavenImage = docker.image('maven:3.9.0')
+            try {
+                mavenImage.inside("-v /root/.m2:/root/.m2") {
+                    sh 'mvn test'
                 }
+                junit 'target/surefire-reports/*.xml'
+            } catch (Exception e) {
+                currentBuild.result = 'FAILURE'
+                error("Test failed: ${e.getMessage()}")
             }
         }
         stage('Deliver') {
-            steps {
-                sh './jenkins/scripts/deliver.sh'
+            def mavenImage = docker.image('maven:3.9.0')
+            try {
+                mavenImage.inside("-v /root/.m2:/root/.m2") {
+                    sh './jenkins/scripts/deliver.sh'
+                } 
+            } catch (Exception e) {
+                currentBuild.result = 'FAILURE'
+                error("Deliver failed: ${e.getMessage()}")
             }
         }
+    } catch (Exception e) {
+        currentBuild.result = 'FAILURE'
+        error("Pipeline failed: ${e.getMessage()}")
     }
 }
