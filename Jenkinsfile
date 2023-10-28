@@ -38,7 +38,7 @@ node {
             def userInput = input(
                 id: 'userInput',
                 message: 'Lanjutkan ke tahap Deploy?',
-                parameters: [choice(name: 'ACTION', description: 'Klik "Proceed" untuk melanjutkan dan klik "Abort" untuk mengakhiri')]
+                description: 'Klik "Proceed" untuk melanjutkan dan klik "Abort" untuk mengakhiri'
             )
         }
         stage('Deploy') {
