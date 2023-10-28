@@ -35,8 +35,7 @@ node {
             }
         }
         stage('Manual Approval') {
-            input message: 'Lanjutkan ke tahap Deploy?',
-            ok: 'Proceed', parameters: [choice(choices: 'Proceed\nAbort', description: 'Pilih untuk melanjutkan atau menghentikan')]
+            input message: 'Lanjutkan ke tahap Deploy?', ok: 'Proceed', fail: 'Abort'
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
