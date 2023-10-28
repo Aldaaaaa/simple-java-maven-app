@@ -36,6 +36,7 @@ node {
         }
         stage('Manual Approval') {
             input message: 'Lanjutkan ke tahap Deploy?'
+            sh './jenkins/scripts/kill.sh' 
         }
         stage('Deploy') {
             def mavenImage = docker.image('maven:3.9.0')
@@ -44,7 +45,6 @@ node {
                     sh './jenkins/scripts/deliver.sh'
                 }
                 sleep time: 60, unit: 'SECONDS'
-                sh './jenkins/scripts/kill.sh'
             } catch (Exception e) {
                 currentBuild.result = 'FAILURE'
                 error("Deploy failed: ${e.getMessage()}")
